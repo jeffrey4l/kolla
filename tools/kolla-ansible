@@ -35,6 +35,7 @@ Options:
 Commands:
     deploy  Deploy and start all kolla containers
     pull    Pull all images for containers (only pulls, no runnnig container changes)
+    purge   Purge all the installed containers
 EOF
 }
 
@@ -88,6 +89,10 @@ case "$1" in
         CMD="ansible-playbook -i $INVENTORY -e @/etc/kolla/globals.yml -e @/etc/kolla/passwords.yml $PLAYBOOK -e action=pull"
         ;;
 
+(purge)
+        ACTION="Purge the hosts"
+        CMD="ansible-playbook -i $INVENTORY -e @/etc/kolla/globals.yml -e @/etc/kolla/passwords.yml $PLAYBOOK -e action=purge"
+        ;;
 (*)     usage
         exit 0
         ;;
