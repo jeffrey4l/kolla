@@ -1,40 +1,31 @@
 ---
 - name: Ensuring config directories exist
   file:
-    path: "{{ node_config_directory }}/{{ item }}"
+    path: "{{ node_config_directory }}/{{ item.service }}"
     state: "directory"
     recurse: yes
-  with_items:
-    - "cinder-api"
-    - "cinder-backup"
-    - "cinder-scheduler"
-    - "cinder-volume"
+  when: inventory_hostname in groups[item.group]
+  with_items: "{{ cinder_service_groups }}"
 
 - name: Copying over config.json files for services
   template:
-    src: "{{ item }}.json.j2"
-    dest: "{{ node_config_directory }}/{{ item }}/config.json"
-  with_items:
-    - "cinder-api"
-    - "cinder-backup"
-    - "cinder-scheduler"
-    - "cinder-volume"
+    src: "{{ item.service }}.json.j2"
+    dest: "{{ node_config_directory }}/{{ item.service }}/config.json"
+  when: inventory_hostname in groups[item.group]
+  with_items: "{{ cinder_service_groups }}"
 
 - name: Copying over cinder.conf
   merge_configs:
     vars:
-      service_name: "{{ item }}"
+      service_name: "{{ item.service }}"
     sources:
       - "{{ role_path }}/templates/cinder.conf.j2"
       - "/etc/kolla/config/global.conf"
       - "/etc/kolla/config/database.conf"
       - "/etc/kolla/config/messaging.conf"
       - "/etc/kolla/config/cinder.conf"
-      - "/etc/kolla/config/cinder/{{ item }}.conf"
+      - "/etc/kolla/config/cinder/{{ item.service }}.conf"
       - "/etc/kolla/config/cinder/{{ inventory_hostname }}/cinder.conf"
-    dest: "{{ node_config_directory }}/{{ item }}/cinder.conf"
-  with_items:
-    - "cinder-api"
-    - "cinder-backup"
-    - "cinder-scheduler"
-    - "cinder-volume"
+    dest: "{{ node_config_directory }}/{{ item.service }}/cinder.conf"
+  when: inventory_hostname in groups[item.group]
+  with_items: "{{ cinder_service_groups }}"

@@ -1,5 +1,11 @@
 ---
 project_name: "cinder"
+cinder_service_groups:
+  - { name: cinder_api, service: cinder-api, group: cinder-api }
+  - { name: cinder_scheduler, service: cinder-scheduler, group: cinder-scheduler }
+  - { name: cinder_volume, service: cinder-volume, group: cinder-volume }
+  - { name: cinder_backup, service: cinder-backup, group: cinder-backup }
+
 
 ####################
 # Ceph
