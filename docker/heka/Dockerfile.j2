@@ -7,14 +7,14 @@ MAINTAINER {{ maintainer }}
 
 {% if base_distro in ['centos', 'fedora', 'oraclelinux', 'rhel'] %}
     {% set heka_packages = [
-        'https://github.com/mozilla-services/heka/releases/download/v0.10.0/heka-0_10_0-linux-amd64.rpm'
+        'http://7xvc1x.com1.z0.glb.clouddn.com/heka/heka-0_10_0-linux-amd64.rpm'
     ] %}
 RUN useradd --user-group heka \
     && mkdir /etc/heka
 
 {% elif base_distro in ['ubuntu', 'debian'] %}
     {% set heka_packages = [
-        'https://github.com/mozilla-services/heka/releases/download/v0.10.0/heka_0.10.0_amd64.deb'
+        'http://7xvc1x.com1.z0.glb.clouddn.com/heka/heka_0.10.0_amd64.deb'
     ] %}
 {% endif %}
 
