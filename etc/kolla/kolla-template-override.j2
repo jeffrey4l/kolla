@@ -1,0 +1,28 @@
+{% extends parent_template %}
+
+{% block base_footer %}
+{% if base_distro == 'centos' %}
+RUN sed -i -e 's|^\(mirrorlist.*\)|#\1|' \
+            -e 's|^#baseurl=http://mirror.centos.org|baseurl=http://mirrors.aliyun.com|' \
+            /etc/yum.repos.d/CentOS-Base.repo \
+    && sed -i -e 's|^\(mirrorlist.*\)|#\1|g' \
+            -e 's|^#baseurl=http://download.fedoraproject.org/pub|baseurl=http://mirrors.aliyun.com|' \
+            /etc/yum.repos.d/epel.repo \
+    && sed -i -e 's|^baseurl=http://mirror.centos.org|baseurl=http://mirrors.aliyun.com|' \
+            /etc/yum.repos.d/CentOS-Ceph-Jewel.repo \
+    && sed -i -e 's|^baseurl=http://mirror.centos.org|baseurl=http://mirrors.aliyun.com|' \
+            /etc/yum.repos.d/CentOS-QEMU-EV.repo \
+    && sed -i -e 's|^baseurl.*|baseurl=https://mirrors.tuna.tsinghua.edu.cn/mariadb/yum/10.0/centos7-amd64/|' \
+            -e 's|gpgkey.*|gpgkey=https://mirrors.tuna.tsinghua.edu.cn/mariadb/yum/RPM-GPG-KEY-MariaDB|' \
+            /etc/yum.repos.d/MariaDB.repo
+{% endif %}
+{% if base_distro == 'oracle' %}
+RUN sed -i -e 's|^\(mirrorlist.*\)|#\1|' \
+            -e 's|^#baseurl=http://download.fedoraproject.org/pub|baseurl=http://mirrors.aliyun.com\' \
+            /etc/yum.repos.d/epel.repo \
+    && sed -i -e 's|^baseurl=http://mirror.centos.org|baseurl=http://mirrors.aliyun.com|' \
+            /etc/yum.repos.d/CentOS-Ceph-Jewel.repo \
+    && sed -i -e 's|^baseurl=http://mirror.centos.org|baseurl=http://mirrors.aliyun.com|' \
+            /etc/yum.repos.d/CentOS-QEMU-EV.repo
+{% endif %}
+{% endblock %}
