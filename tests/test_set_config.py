@@ -22,7 +22,7 @@ from oslotest import base
 this_dir = os.path.dirname(sys.modules[__name__].__file__)
 set_configs_file = os.path.abspath(
     os.path.join(this_dir, '..',
-                 'docker', 'base', 'set_configs.py'))
+                 'docker', 'base', 'playbooks', 'set_configs.py'))
 
 set_configs = imp.load_source('set_configs', set_configs_file)
 

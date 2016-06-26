@@ -1,0 +1,12 @@
+- name: Install CentOS Repos
+  yum: name={{ item }}
+  with_items:
+    - epel-release
+    - centos-release-ceph-hammer
+    - centos-release-qemu-ev
+
+- rpm_key: key={{ item }}
+  with_items:
+    - /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+    - /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-SIG-Storage
+    - /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-SIG-Virtualization

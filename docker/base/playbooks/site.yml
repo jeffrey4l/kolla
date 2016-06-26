@@ -1,0 +1,29 @@
+- hosts: localhost
+  tasks:
+    - name: Set the curlrc
+      copy: src=curlrc dest=/root/.curlrc
+    - name: set PS1
+      blockinfile:
+        dest: "{{ item }}"
+        create: yes
+        block: |
+          _KBOLD="\[$(tput bold)\]"
+          _KRESET="\[$(tput sgr0)\]"
+          PS1="${_KBOLD}(${KOLLA_SERVICE_NAME})${_KRESET}[\u@\h \W]\\$"
+      with_items:
+        - /etc/skel/.bashrc
+        - /root/.bashrc
+        - /etc/bashrc
+    - include: "{{ ansible_os_family }}.yml"
+    - name: Copy the set_config file
+      copy: src=set_configs.py dest=/usr/local/bin/kolla_set_configs mode=755
+    - copy: src=start.sh dest=/usr/local/bin/kolla_start mode=755
+    - copy: src=sudoers dest=/etc/sudoers mode=440
+    - copy: content="" dest=/usr/local/bin/kolla_extend_start mode=755
+    - group: name=kolla
+    - name: Run yum clean all
+      command: yum clean all
+      when: ansible_os_family == "RedHat"
+    - name: Run apt-get clean
+      command: apt-get clean
+      when: ansible_os_family == "Debian"

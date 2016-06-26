@@ -1,0 +1,5 @@
+- yum: name={{ item }}
+  with_items:
+    - https://rdo.fedorapeople.org/rdo-release.rpm
+    - dnf
+    - dnf-plugins-core
