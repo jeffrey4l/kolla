@@ -1,0 +1,11 @@
+{
+    "command": "/usr/bin/mongod --config /etc/mongodb-config.conf",
+    "config_files": [
+        {
+            "source": "{{ container_config_directory }}/mongodb-config.conf",
+            "dest": "/etc/mongodb-config.conf",
+            "owner": "mongodb",
+            "perm": "0644"
+        }
+    ]
+}

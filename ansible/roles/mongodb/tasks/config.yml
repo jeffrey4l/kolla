@@ -6,6 +6,8 @@
     recurse: yes
   with_items:
     - "mongodb"
+    - "mongos"
+    - "mongodb-config"
 
 - name: Copying over config.json files for services
   template:
@@ -13,6 +15,8 @@
     dest: "{{ node_config_directory }}/{{ item }}/config.json"
   with_items:
     - "mongodb"
+    - "mongodb-config"
+    - "mongos"
 
 - name: Copying over mongodb.conf
   template:
@@ -20,3 +24,17 @@
     dest: "{{ node_config_directory }}/mongodb/{{ item }}"
   with_items:
      - "mongodb.conf"
+
+- name: Copying over mongodb-config.conf
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ node_config_directory }}/mongodb-config/{{ item }}"
+  with_items:
+     - "mongodb-config.conf"
+
+- name: Copying over mongos.conf
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ node_config_directory }}/mongos/{{ item }}"
+  with_items:
+     - "mongos.conf"

@@ -11,10 +11,7 @@ storage:
 
 net:
   bindIp: {{ hostvars[inventory_hostname]['ansible_' + api_interface]['ipv4']['address'] }}
-  port: 27018
-
-replication:
-  replSetName: rs0
+  port: 27019
 
 sharding:
-  clusterRole: shardsvr
+  clusterRole: configsvr

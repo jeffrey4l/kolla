@@ -1,4 +1,30 @@
 ---
+- name: Starting MongoDB Config Server container 
+  kolla_docker:
+    action: "start_container"
+    common_options: "{{ docker_common_options }}"
+    image: "{{ mongodb_image_full }}"
+    name: "mongodb_config"
+    privileged: True
+    volumes:
+      - "{{ node_config_directory }}/mongodb-config/:{{ container_config_directory }}/:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "kolla_logs:/var/log/kolla/"
+      - "mongodb_config:/var/lib/mongodb"
+
+- name: Starting mongos container 
+  kolla_docker:
+    action: "start_container"
+    common_options: "{{ docker_common_options }}"
+    image: "{{ mongodb_image_full }}"
+    name: "mongos"
+    privileged: True
+    volumes:
+      - "{{ node_config_directory }}/mongos/:{{ container_config_directory }}/:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "kolla_logs:/var/log/kolla/"
+      - "mongos:/var/lib/mongodb"
+
 - name: Starting mongodb container
   kolla_docker:
     action: "start_container"
@@ -11,3 +37,9 @@
       - "/etc/localtime:/etc/localtime:ro"
       - "kolla_logs:/var/log/kolla/"
       - "mongodb:/var/lib/mongodb"
+
+- fail:
+
+- wait_for: host={{ hostvars[inventory_hostname]['ansible_' + api_interface]['ipv4']['address'] }} port={{ mongodb_port }}
+
+- include: "bootstrap_cluster.yml"

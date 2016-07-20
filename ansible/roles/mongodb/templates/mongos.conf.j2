@@ -1,0 +1,11 @@
+systemLog:
+  destination: file
+  logAppend: true
+  path: /var/log/kolla/mongodb/mongos.log
+
+net:
+  bindIp: {{ hostvars[inventory_hostname]['ansible_' + api_interface]['ipv4']['address'] }}
+  port: 27017
+
+sharding:
+  configDB: a1:27019,a2:27019,a3:27019

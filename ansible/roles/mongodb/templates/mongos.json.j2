@@ -1,0 +1,11 @@
+{
+    "command": "/usr/bin/mongos --config /etc/mongos.conf",
+    "config_files": [
+        {
+            "source": "{{ container_config_directory }}/mongos.conf",
+            "dest": "/etc/mongos.conf",
+            "owner": "mongodb",
+            "perm": "0644"
+        }
+    ]
+}

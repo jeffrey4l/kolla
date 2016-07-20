@@ -1,0 +1,28 @@
+- name: Checking current replication status
+  command: "docker exec -t mongodb mongo {{ hostvars[inventory_hostname]['ansible_' + api_interface]['ipv4']['address'] }} --quiet --eval \'rs.status().ok\'"
+  register: mongodb_replication_status
+  changed_when: false
+  delegate_to: "{{ groups['mongodb'][0] }}"
+  run_once: True
+
+- name: Copying the MongoDB replication set bootstrap script
+  template: src=bootstrap_cluster.js.j2 dest=/tmp/mongodb_bootstrap_replication_set.js
+  when: mongodb_replication_status.stdout != "1"
+  delegate_to: "{{ groups['mongodb'][0] }}"
+  run_once: True
+
+- name: Bootstraping the MongoDB replication set
+  command: "docker exec -t mongodb mongo {{ hostvars[inventory_hostname]['ansible_' + api_interface]['ipv4']['address'] }} --quiet --eval \'{{ lookup('file','/tmp/mongodb_bootstrap_replication_set.js') }}\'"
+  register: bootstrap_mongodb_cluster
+  when: mongodb_replication_status.stdout != "1"
+  failed_when: "{{ (bootstrap_mongodb_cluster.stdout|from_json).ok != 1 }}"
+  delegate_to: "{{ groups['mongodb'][0] }}"
+  run_once: True
+
+- name: Deleting the MongoDB replication set bootstrap script
+  file: path=/tmp/mongodb_bootstrap_replication_set.js state=absent
+  when: mongodb_replication_status.stdout != "1"
+  changed_when: false
+  failed_when: false
+  delegate_to: "{{ groups['mongodb'][0] }}"
+  run_once: True
