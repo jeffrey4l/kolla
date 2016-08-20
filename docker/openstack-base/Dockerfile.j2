@@ -10,7 +10,7 @@ MAINTAINER {{ maintainer }}
         'openssl'
     ] %}
 
-RUN {{ macros.install_packages(openstack_base_packages) }}
+{{ macros.install_packages(openstack_base_packages) }}
 
 {% endif %}
 {% if install_type == 'binary' %}
@@ -123,7 +123,6 @@ RUN {{ macros.install_packages(openstack_base_packages) }}
             'python-paste',
             'python-paste-deploy',
             'python-pbr',
-            'python-pip',
             'python-ply',
             'python-posix_ipc',
             'python-prettytable',
@@ -185,7 +184,7 @@ ENV DEBIAN_FRONTEND noninteractive
         ] %}
     {% endif %}
 
-RUN {{ macros.install_packages(openstack_base_packages | customizable("packages")) }}
+{{ macros.install_packages(openstack_base_packages | customizable("packages")) }}
 
 {% elif install_type == 'source' %}
     {% if base_distro in ['fedora', 'centos', 'oraclelinux', 'rhel'] %}
@@ -195,6 +194,7 @@ RUN {{ macros.install_packages(openstack_base_packages | customizable("packages"
             'libffi-devel',
             'libxml2-devel',
             'libxslt-devel',
+            'libyaml-devel',
             'MariaDB-devel',
             'openldap-devel',
             'openssl-devel',
@@ -212,19 +212,18 @@ RUN {{ macros.install_packages(openstack_base_packages | customizable("packages"
             'libmariadbclient-dev',
             'libxslt1-dev',
             'libffi-dev',
+            'libxml2-dev',
             'libyaml-dev',
+            'libz-dev',
             'pkg-config',
             'git'
         ] %}
     {% endif %}
 
-RUN {{ macros.install_packages(openstack_base_packages | customizable("packages")) }}
+{{ macros.install_packages(openstack_base_packages | customizable("packages")) }}
 ADD openstack-base-archive /openstack-base-source
 RUN ln -s openstack-base-source/* /requirements \
     && mkdir -p /var/lib/kolla \
-    && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
-    && python get-pip.py \
-    && rm get-pip.py \
     && pip --no-cache-dir install -U virtualenv \
     && virtualenv --system-site-packages /var/lib/kolla/venv \
     && /var/lib/kolla/venv/bin/pip --no-cache-dir install --upgrade -c requirements/upper-constraints.txt \

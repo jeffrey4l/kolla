@@ -1,4 +1,4 @@
-#!/usr/local/bin/dumb-init /bin/bash
+#!/usr/bin/env dumb-init /bin/bash
 set -o errexit
 
 # Wait for the log socket

@@ -155,6 +155,7 @@ RUN yum -y install \
         sudo \
         which \
         python \
+        python-pip \
         lvm2 \
         scsi-target-utils \
         iscsi-initiator-utils \
@@ -205,6 +206,7 @@ COPY apt_preferences.{{ base_distro }} /etc/apt/preferences
    'lvm2',
    'open-iscsi',
    'python',
+   'python-pip',
    'tgt']
 %}
 
@@ -252,6 +254,12 @@ RUN sed -i "s|'purelib': '\$base/local/lib/python\$py_version_short/dist-package
 {# endif for base_distro ubuntu, debian #}
 {% endif %}
 
+{% if install_type == 'source' %}
+RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
+    && python get-pip.py \
+    && rm get-pip.py
+{% endif %}
+
 COPY set_configs.py /usr/local/bin/kolla_set_configs
 COPY start.sh /usr/local/bin/kolla_start
 COPY sudoers /etc/sudoers
@@ -261,7 +269,6 @@ RUN touch /usr/local/bin/kolla_extend_start \
     && chmod 440 /etc/sudoers \
     && groupadd kolla \
     && rm -f /tmp/kolla_bashrc \
-    && curl -sSL https://github.com/Yelp/dumb-init/releases/download/v1.1.3/dumb-init_1.1.3_amd64 -o /usr/local/bin/dumb-init \
-    && chmod +x /usr/local/bin/dumb-init
+    && pip install dumb-init
 
 CMD ["kolla_start"]
