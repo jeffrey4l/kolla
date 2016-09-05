@@ -10,6 +10,16 @@ MAINTAINER {{ maintainer }}
 
 {{ macros.install_packages(ironic_inspector_packages | customizable("packages")) }}
 
+{% elif install_type == 'source' %}
+
+ADD ironic-inspector-archive /ironic-inspector-source
+RUN ln -s ironic-inspector-source/* ironic-inspector \
+    && /var/lib/kolla/venv/bin/pip --no-cache-dir install --upgrade -c requirements/upper-constraints.txt /ironic-inspector \
+    && mkdir -p /etc/ironic-inspector \
+    && cp -r /ironic-inspector/rootwrap.conf /etc/ironic-inspector/rootwrap.conf \
+    && cp -r /ironic-inspector/rootwrap.d /etc/ironic-inspector/rootwrap.d \
+    && chown -R ironic: /etc/ironic-inspector
+
 {% endif %}
 
 {% block ironic_inspector_footer %}{% endblock %}
