@@ -14,6 +14,20 @@
   when: container_state.Running | bool
   any_errors_fatal: True
 
+- command: docker cp mariadb:/var/lib/mysql/grastate.dat /tmp/grastate.dat
+- set_fact:
+    seqno: "{{ (lookup('file', '/tmp/grastate.data')|from_yaml).seqno) }}"
+
+- shell: "if [ {{ hostvars[inventory_hostname]['seqno'] }} -lt {{ hostvars[item]['seqno'] }} ]; then echo {{ hostvars[item]['seqno'] }}; fi"
+  with_items: groups['mariadb']
+  register: result_c
+
+- set_fact: seqno_max_hostname={{ inventory_hostname }}
+  when: result_c.results | map(attribute='stdout') | join('') == ""
+
+- set_fact: mariadb_recover_inventory_name=seqno_max_hostname
+  when: mariadb_recover_inventory_name is not defined
+
 - name: Starting first MariaDB container
   kolla_docker:
     action: "start_container"
