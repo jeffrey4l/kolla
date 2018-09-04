@@ -1,0 +1,10 @@
+---
+language: python
+sudo: required
+
+services:
+  - docker
+
+script:
+  - pip install -r requirements.txt
+  - bash -x .travis/build.sh
